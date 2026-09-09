@@ -51,7 +51,7 @@ class DatabaseConfig(BaseModel):
 
     @cached_property
     def url(self) -> str:
-        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{5452}/{self.name}"
+        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
 
 
 class RedisConfig(BaseModel):
