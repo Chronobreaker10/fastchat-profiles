@@ -16,6 +16,7 @@ async def test_update_profile(
         json=data,
     )
     assert response.status_code == status.HTTP_200_OK
+    assert response.json()["first_name"] == data["first_name"]
     result = await session.execute(
         select(Profile.first_name, Profile.is_private).where(
             Profile.user_id == test_profile.user_id

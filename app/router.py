@@ -2,7 +2,7 @@ from typing import Annotated
 
 from dependencies import CurrentUserDep, ProfileServiceDep, check_api_key
 from fastapi import APIRouter, Depends, Path, status
-from schemas import MessageResponse, ProfileCreate, ProfileRead, ProfileUpdate
+from schemas import ProfileCreate, ProfileRead, ProfileUpdate
 from utils import add_etag
 
 router = APIRouter(
@@ -51,13 +51,12 @@ async def create_user_profile(
 @router.patch(
     "/{user_id}",
     summary="Обновление профиля пользователя",
-    response_model=MessageResponse,
+    response_model=ProfileRead,
 )
 async def update_user_profile(
     user_id: UserDep,
     profile_date: ProfileUpdate,
     service: ProfileServiceDep,
     current_user: CurrentUserDep,
-) -> MessageResponse:
-    await service.update_profile(user_id, profile_date, current_user)
-    return MessageResponse(message="Профиль успешно обновлен")
+) -> ProfileRead:
+    return await service.update_profile(user_id, profile_date, current_user)

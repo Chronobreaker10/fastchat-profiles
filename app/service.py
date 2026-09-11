@@ -52,11 +52,14 @@ class ProfileService:
 
     async def update_profile(
         self, user_id: int, profile_data: ProfileUpdate, current_user: User
-    ) -> None:
-        profile = await self._get_profile_by_user_id(user_id)
-        if profile.user_id != current_user.id:
+    ) -> ProfileRead:
+        if user_id != current_user.id:
             message = "У вас нет прав на редактирования профиля этого пользователя"
             raise ForbiddenError(message)
-        await self.repo.update(self.session, user_id, profile_data)
+        profile = await self.repo.update(self.session, user_id, profile_data)
+        if profile is None:
+            message = f"Профиль пользователя с ID {user_id} не найден"
+            raise ProfileNotFoundError(message)
         await self.session.commit()
         await self.cache.delete(user_id)
+        return ProfileRead.model_validate(profile)
